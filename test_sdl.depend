@@ -352,7 +352,7 @@
 	<SDL.h>
 	<SDL_image.h>
 
-1523185261 e:\data\c++project\test_sdl\main.h
+1523202694 e:\data\c++project\test_sdl\main.h
 	<iostream>
 	<fstream>
 	<SDL.h>
@@ -384,7 +384,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1523129727 source:e:\data\c++project\test_sdl\gamescreen.cpp
+1523201884 source:e:\data\c++project\test_sdl\gamescreen.cpp
 	<main.h>
 	<time.h>
 
@@ -396,12 +396,15 @@
 	<main.h>
 	<iostream>
 
-1523129526 source:e:\data\c++project\test_sdl\highscorescreen.cpp
+1523197119 source:e:\data\c++project\test_sdl\highscorescreen.cpp
 	<main.h>
 
 1523129138 source:e:\data\c++project\test_sdl\datamanager.cpp
 	<main.h>
 
 1523185945 source:e:\data\c++project\test_sdl\instructionscreen.cpp
+	<main.h>
+
+1523202877 source:e:\data\c++project\test_sdl\outroscreen.cpp
 	<main.h>
 

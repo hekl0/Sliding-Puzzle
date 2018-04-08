@@ -8,7 +8,6 @@ int imageHeight;
 SDL_Texture* imageTexture = NULL;
 SDL_Texture* backgroundGameScreen = NULL;
 SDL_Texture* borderGameScreen = NULL;
-SDL_Texture* gameOver = NULL;
 TTF_Font* gFontGameScreen = NULL;
 
 bool isPreviewing = false;
@@ -20,7 +19,8 @@ void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src
     //generate game data
     gameValue.width = mode;
     gameValue.height = mode;
-    gameValue.numMove = 0;
+    gameValue.time = 0;
+    gameValue.isSetStartTime = false;
     gameValue.pos0 = {mode-1, mode-1};
     for (int i = 0; i < mode; i++)
         for (int j = 0; j < mode; j++)
@@ -37,6 +37,7 @@ void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src
     SDL_Event e;
     while (!quit) {
         if (checkFinished(mode)) break;
+        showScore(gRenderer);
 
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) quit = true;
@@ -99,123 +100,10 @@ void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src
         }
     }
 
+    Sleep(100);
     if (!quit)
-        if (giveUp) loseScreen(gRenderer, quit);
-        else winScreen(gRenderer, quit, mode-2);
-}
-
-void GameScreen::loseScreen(SDL_Renderer* gRenderer, bool& quit) {
-    SDL_Rect dstRect;
-
-    //draw window
-    if (gameOver == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/cloud.png");
-        gameOver = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
-
-    dstRect.x = 103;
-    dstRect.y = 250;
-    dstRect.w = 517;
-    dstRect.h = 242;
-
-    SDL_RenderCopy(gRenderer, gameOver, NULL, &dstRect);
-
-    //draw text
-    gFontGameScreen = TTF_OpenFont( "brush.ttf", 24 );
-    drawText(gRenderer, "Aww!", 200, 307, {255,255,255,255});
-    drawText(gRenderer, "Better luck next time!", 200, 347, {255,255,255,255});
-    gFontGameScreen = TTF_OpenFont( "brush.ttf", 18 );
-    drawText(gRenderer, "\"Press Enter to continue\"", 260, 430, {255,255,255,255});
-    gFontGameScreen = NULL;
-
-    //update screen
-    SDL_RenderPresent(gRenderer);
-
-    SDL_Event e;
-    while (!quit) {
-        while (SDL_PollEvent(&e) != 0)
-            if (e.type == SDL_QUIT) quit = true;
-
-        const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
-        if (currentKeyStates[SDL_SCANCODE_RETURN]) break;
-    }
-}
-
-void GameScreen::winScreen(SDL_Renderer* gRenderer, bool& quit, int mode) {
-    Sleep(50);
-    SDL_Rect dstRect;
-
-    drawWinScreen(gRenderer, "");
-
-    //update screen
-    SDL_RenderPresent(gRenderer);
-
-    SDL_Event e;
-    string inputText = "";
-    while (!quit) {
-        while (SDL_PollEvent(&e) != 0) {
-            if (e.type == SDL_QUIT) quit = true;
-            if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.sym == SDLK_BACKSPACE && inputText.length() > 0) inputText.pop_back();
-                drawWinScreen(gRenderer, inputText);
-            }
-            if (e.type == SDL_TEXTINPUT && inputText.length() < 10) {
-                inputText += e.text.text;
-                drawWinScreen(gRenderer, inputText);
-            }
-        }
-
-        const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
-        if (currentKeyStates[SDL_SCANCODE_RETURN]) break;
-    }
-
-    DataManager::addItem(mode, inputText, gameValue.numMove);
-}
-
-void GameScreen::drawWinScreen(SDL_Renderer* gRenderer, string text) {
-    if (text == "") text = " ";
-    //draw window
-    if (gameOver == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/cloud.png");
-        gameOver = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
-
-    SDL_Rect dstRect;
-    dstRect.x = 103;
-    dstRect.y = 250;
-    dstRect.w = 517;
-    dstRect.h = 242;
-
-    SDL_RenderCopy(gRenderer, gameOver, NULL, &dstRect);
-
-    //draw text
-    gFontGameScreen = TTF_OpenFont( "brush.ttf", 20 );
-    drawText(gRenderer, "Congratulation!", 175, 287, {255,255,255,255});
-    string temp = "";
-    temp = temp + "You have solved the puzzle within " + to_string(gameValue.numMove) + " moves!";
-    drawText(gRenderer, temp, 175, 317, {255,255,255,0});
-    drawText(gRenderer, "Please type in your name, the mastermind !", 175, 347, {255,255,255,255});
-    drawText(gRenderer, "(limit 10 character)", 190, 367, {255,255,255,255});
-    gFontGameScreen = TTF_OpenFont( "brush.ttf", 16 );
-    drawText(gRenderer, "\"Press Enter to continue\"", 275, 440, {255,255,255,255});
-
-    //draw name
-    gFontGameScreen = TTF_OpenFont( "score.ttf", 30 );
-    SDL_Surface* textSurface = TTF_RenderText_Solid( gFontGameScreen, text.c_str(), {255,0,0,255} );
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
-    //SDL_FreeSurface(textSurface);
-
-    dstRect.w = textSurface->w;
-    dstRect.h = textSurface->h;
-    dstRect.x = 355 - dstRect.w / 2;
-    dstRect.y = 400;
-
-    SDL_RenderCopy(gRenderer, textTexture, NULL, &dstRect);
-
-    SDL_RenderPresent(gRenderer);
-    gFontGameScreen = NULL;
+        if (giveUp) OutroScreen::loseScreen(gRenderer, quit);
+        else OutroScreen::winScreen(gRenderer, quit, mode-2, gameValue.time);
 }
 
 bool GameScreen::checkFinished(int mode) {
@@ -227,12 +115,29 @@ bool GameScreen::checkFinished(int mode) {
     return true;
 }
 
+void GameScreen::showScore(SDL_Renderer* gRenderer) {
+    if (!gameValue.isSetStartTime) return;
+
+    if (SDL_GetTicks() / 700 - gameValue.startTime != gameValue.time) {
+        gameValue.time = SDL_GetTicks() / 700 - gameValue.startTime;
+
+        erasePiece(gRenderer, 203, 51, 110, 48);
+        drawText(gRenderer, to_string(gameValue.time), 220, 57, {0,0,0,255});
+
+        SDL_RenderPresent(gRenderer);
+    }
+}
+
 //toPiece is empty 0
 void GameScreen::swapPiece(SDL_Renderer* gRenderer, GAME& gameValue, int mode, int fromI, int fromJ, int toI, int toJ) {
     if (isPreviewing) return;
 
     if (fromI < 0 || fromI > mode-1 || fromJ < 0 || fromJ > mode-1) return;
-    gameValue.numMove++;
+
+    if (!gameValue.isSetStartTime) {
+        gameValue.isSetStartTime = true;
+        gameValue.startTime = SDL_GetTicks() / 700 - gameValue.time;
+    }
 
     int value = gameValue.table[fromI][fromJ];
     gameValue.table[fromI][fromJ] = 0;
@@ -255,6 +160,8 @@ void GameScreen::slidingAnimation(SDL_Renderer* gRenderer, int mode, int value, 
     int toX = toJ * sizePiece + toJ * 5 + 125;
 
     while (fromX != toX || fromY != toY) {
+        showScore(gRenderer);
+
         erasePiece(gRenderer, fromX, fromY, sizePiece, sizePiece);
         //4x4 = 115 | 3x3 = 155 | 2x2 = 235
         int add = (sizePiece + 5) / 20;
@@ -371,8 +278,9 @@ void GameScreen::loadBackground(SDL_Renderer* gRenderer, int mode) {
     //draw image
     drawImage(gRenderer, mode);
 
-    //show score
-    drawText(gRenderer, to_string(gameValue.numMove), 220, 60, {0,0,0,255});
+    //show current score
+    drawText(gRenderer, to_string(gameValue.time), 220, 57, {0,0,0,255});
+    SDL_RenderPresent(gRenderer);
 
     SDL_RenderPresent( gRenderer );
 }

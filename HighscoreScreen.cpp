@@ -70,19 +70,25 @@ void HighscoreScreen::loadHighscore(SDL_Renderer* gRenderer, int mode) {
     //215 305
     if (data.size() >= 1) {
         drawText(gRenderer, data[0].first, 215, 305);
-        drawText(gRenderer, to_string(data[0].second), 555, 305);
+        string text = "";
+        text = text + to_string(data[0].second) + "s";
+        drawText(gRenderer, text, 555, 305);
     }
     else drawText(gRenderer, "~~~~~~~~~~~~~~~~~~", 215, 305);
 
     if (data.size() >= 2) {
         drawText(gRenderer, data[1].first, 215, 445);
-        drawText(gRenderer, to_string(data[1].second), 555, 445);
+        string text = "";
+        text = text + to_string(data[1].second) + "s";
+        drawText(gRenderer, text, 555, 445);
     }
     else drawText(gRenderer, "~~~~~~~~~~~~~~~~~~", 215, 445);
 
     if (data.size() >= 3) {
         drawText(gRenderer, data[2].first, 215, 575);
-        drawText(gRenderer, to_string(data[2].second), 555, 575);
+        string text = "";
+        text = text + to_string(data[2].second) + "s";
+        drawText(gRenderer, text, 555, 575);
     }
     else drawText(gRenderer, "~~~~~~~~~~~~~~~~~~", 215, 575);
 }

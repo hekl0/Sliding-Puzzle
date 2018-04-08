@@ -10,48 +10,14 @@
 #include <vector>
 
 using namespace std;
-
+////////////////////////////////////
 struct GAME {
     int width, height;
     int table[4][4];
     COORD pos0;
-    int numMove;
-};
-
-const int SCREEN_WIDTH = 700, SCREEN_HEIGHT = 700;
-
-class MainScreen {
-    public:
-        static void start(SDL_Renderer* gRenderer);
-};
-
-class OptionScreen {
-    public:
-        static void start(SDL_Renderer* gRenderer, bool& quit);
-        static void loadBackground(SDL_Renderer* gRenderer, int mode, string src, bool isChangingImage, string text);
-        static void loadImage(SDL_Renderer* gRenderer, string src);
-        static void EasyOption(SDL_Renderer* gRenderer);
-        static void MediumOption(SDL_Renderer* gRenderer);
-        static void HardOption(SDL_Renderer* gRenderer);
-        static void changeImageSource(SDL_Renderer* gRenderer, int mode, string& src, bool& quit);
-};
-
-class GameScreen {
-    public:
-        static void start(SDL_Renderer* gRenderer, bool& quit, int mode, string src);
-        static void loadBackground(SDL_Renderer* gRenderer, int mode);
-        static void loadImage(SDL_Renderer* gRenderer, string src);
-        static void drawText(SDL_Renderer* gRenderer, string text, int x, int y, SDL_Color color);
-        static void drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int w, int h, int value);
-        static void erasePiece(SDL_Renderer* gRenderer, int x, int y, int w, int h);
-        static void drawImage(SDL_Renderer* gRenderer, int mode);
-        static void shuffleGame(GAME& gameValue, int mode);
-        static void swapPiece(SDL_Renderer* gRenderer, GAME& gameValue, int mode, int fromI, int fromJ, int toI, int toJ);
-        static void slidingAnimation(SDL_Renderer* gRenderer, int mode, int value, int fromI, int fromJ, int toI, int toJ);
-        static bool checkFinished(int mode);
-        static void loseScreen(SDL_Renderer* gRenderer, bool& quit);
-        static void winScreen(SDL_Renderer* gRenderer, bool& quit, int mode);
-        static void drawWinScreen(SDL_Renderer* gRenderer, string text);
+    int time;
+    int startTime;
+    bool isSetStartTime;
 };
 
 class State {
@@ -103,6 +69,40 @@ class SolvingPuzzle {
         static void moveBlock(string moves, State &node);
         static COORD locate(int value, State node);
 };
+////////////////////////////////////////////
+const int SCREEN_WIDTH = 700, SCREEN_HEIGHT = 700;
+
+class MainScreen {
+    public:
+        static void start(SDL_Renderer* gRenderer);
+};
+
+class OptionScreen {
+    public:
+        static void start(SDL_Renderer* gRenderer, bool& quit);
+        static void loadBackground(SDL_Renderer* gRenderer, int mode, string src, bool isChangingImage, string text);
+        static void loadImage(SDL_Renderer* gRenderer, string src);
+        static void EasyOption(SDL_Renderer* gRenderer);
+        static void MediumOption(SDL_Renderer* gRenderer);
+        static void HardOption(SDL_Renderer* gRenderer);
+        static void changeImageSource(SDL_Renderer* gRenderer, int mode, string& src, bool& quit);
+};
+
+class GameScreen {
+    public:
+        static void start(SDL_Renderer* gRenderer, bool& quit, int mode, string src);
+        static void loadBackground(SDL_Renderer* gRenderer, int mode);
+        static void loadImage(SDL_Renderer* gRenderer, string src);
+        static void drawText(SDL_Renderer* gRenderer, string text, int x, int y, SDL_Color color);
+        static void drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int w, int h, int value);
+        static void erasePiece(SDL_Renderer* gRenderer, int x, int y, int w, int h);
+        static void drawImage(SDL_Renderer* gRenderer, int mode);
+        static void shuffleGame(GAME& gameValue, int mode);
+        static void swapPiece(SDL_Renderer* gRenderer, GAME& gameValue, int mode, int fromI, int fromJ, int toI, int toJ);
+        static void slidingAnimation(SDL_Renderer* gRenderer, int mode, int value, int fromI, int fromJ, int toI, int toJ);
+        static bool checkFinished(int mode);
+        static void showScore(SDL_Renderer* gRenderer);
+};
 
 class HighscoreScreen {
     public:
@@ -125,6 +125,13 @@ class InstructionScreen {
     public:
         static void start(SDL_Renderer* gRenderer, bool& quit);
         static void loadBackground(SDL_Renderer* gRenderer, int mode);
+};
+
+class OutroScreen {
+    public:
+        static void loseScreen(SDL_Renderer* gRenderer, bool& quit);
+        static void winScreen(SDL_Renderer* gRenderer, bool& quit, int mode, int score);
+        static void drawWinScreen(SDL_Renderer* gRenderer, string text);
 };
 #endif
 

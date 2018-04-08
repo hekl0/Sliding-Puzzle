@@ -1,6 +1,6 @@
 #include <main.h>
 
-SDL_Texture* backgroundInstructionScreen[3];
+SDL_Texture* backgroundInstructionScreen[4];
 
 void InstructionScreen::start(SDL_Renderer* gRenderer, bool& quit) {
     bool backPressed = false;
@@ -21,12 +21,12 @@ void InstructionScreen::start(SDL_Renderer* gRenderer, bool& quit) {
 
                     //left
                     if (56 <= x && x <= 106 && 335 <= y && y <= 370) {
-                        mode = (mode - 1 + 3) % 3;
+                        mode = (mode - 1 + 4) % 4;
                         loadBackground(gRenderer, mode);
                     }
                     //right
                     if (596 <= x && x <= 650 && 335 <= y && y <= 370) {
-                        mode = (mode + 1) % 3;
+                        mode = (mode + 1) % 4;
                         loadBackground(gRenderer, mode);
                     }
                 }

@@ -1,9 +1,9 @@
 #include <main.h>
 #include <iostream>
 
-SDL_Texture* backgroundMainScreen = NULL;
+SDL_Texture* backgroundMainScreenContinue = NULL;
 
-void MainScreen::start(SDL_Renderer* gRenderer, bool& quit) {
+void MainScreenContinue::start(SDL_Renderer* gRenderer, bool& quit) {
     bool goBack = false;
 
     //clear screen
@@ -11,12 +11,12 @@ void MainScreen::start(SDL_Renderer* gRenderer, bool& quit) {
     SDL_RenderClear(gRenderer);
 
     //load background
-    if (backgroundMainScreen == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/background.png");
-        backgroundMainScreen = SDL_CreateTextureFromSurface(gRenderer, surface);
+    if (backgroundMainScreenContinue == NULL) {
+        SDL_Surface* surface = IMG_Load("Picture/backgroundContinue.png");
+        backgroundMainScreenContinue = SDL_CreateTextureFromSurface(gRenderer, surface);
         SDL_FreeSurface(surface);
     }
-    SDL_RenderCopy( gRenderer, backgroundMainScreen, NULL, NULL );
+    SDL_RenderCopy( gRenderer, backgroundMainScreenContinue, NULL, NULL );
     SDL_RenderPresent( gRenderer );
 
     SDL_Event e;
@@ -27,18 +27,23 @@ void MainScreen::start(SDL_Renderer* gRenderer, bool& quit) {
                 if( e.button.button == SDL_BUTTON_LEFT ){
                     int x = e.button.x;
                     int y = e.button.y;
+                    //continue
+                    if (248 <= x && x <= 470 && 247 <= y && y <= 316) {
+                        GameScreen::start(gRenderer, quit, 0, "", true);
+                        goBack = true;
+                    }
                     //New Game
-                    if (259 <= x && x <= 479 && 284 <= y && y <= 356) {
+                    if (248 <= x && x <= 470 && 371 <= y && y <= 437) {
                         OptionScreen::start(gRenderer, quit);
                         goBack = true;
                     }
                     //Introduction
-                    if (259 <= x && x <= 479 && 419 <= y && y <= 490) {
+                    if (248 <= x && x <= 470 && 490 <= y && y <= 560) {
                         InstructionScreen::start(gRenderer, quit);
                         goBack = true;
                     }
                     //High score
-                    if (259 <= x && x <= 479 && 563 <= y && y <= 635) {
+                    if (248 <= x && x <= 470 && 605 <= y && y <= 680) {
                         HighscoreScreen::start(gRenderer, quit);
                         goBack = true;
                     }
@@ -46,3 +51,4 @@ void MainScreen::start(SDL_Renderer* gRenderer, bool& quit) {
         }
     }
 }
+

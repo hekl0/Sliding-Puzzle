@@ -15,7 +15,7 @@ struct GAME {
     int width, height;
     int table[4][4];
     COORD pos0;
-    int time;
+    int score;
     int startTime;
     bool isSetStartTime;
 };
@@ -74,7 +74,12 @@ const int SCREEN_WIDTH = 700, SCREEN_HEIGHT = 700;
 
 class MainScreen {
     public:
-        static void start(SDL_Renderer* gRenderer);
+        static void start(SDL_Renderer* gRenderer, bool& quit);
+};
+
+class MainScreenContinue {
+    public:
+        static void start(SDL_Renderer* gRenderer, bool& quit);
 };
 
 class OptionScreen {
@@ -90,9 +95,9 @@ class OptionScreen {
 
 class GameScreen {
     public:
-        static void start(SDL_Renderer* gRenderer, bool& quit, int mode, string src);
+        static void start(SDL_Renderer* gRenderer, bool& quit, int mode, string src, bool isContinuing);
         static void loadBackground(SDL_Renderer* gRenderer, int mode);
-        static void loadImage(SDL_Renderer* gRenderer, string src);
+        static void loadData(SDL_Renderer* gRenderer, string& src, int& mode, bool isContinuing);
         static void drawText(SDL_Renderer* gRenderer, string text, int x, int y, SDL_Color color);
         static void drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int w, int h, int value);
         static void erasePiece(SDL_Renderer* gRenderer, int x, int y, int w, int h);
@@ -119,6 +124,9 @@ class DataManager {
     public:
         static void addItem(int mode, string name, int score);
         static vector< pair<string, int> > getAllItem(int mode);
+        static bool haveLastGame();
+        static string dataLastGame(GAME& gameValue);
+        static void saveLastGame(bool isUnfinish, GAME gameValue, string src);
 };
 
 class InstructionScreen {

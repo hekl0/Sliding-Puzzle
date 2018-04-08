@@ -1,8 +1,3 @@
-#include <iostream>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
-#include <SDL_Main.h>
 #include <main.h>
 
 using namespace std;
@@ -36,34 +31,10 @@ int main(int argc, char *argv[]) {
     init();
 
     bool quit = false;
-    SDL_Event e;
-
-    MainScreen::start(gRenderer);
 
     while (!quit) {
-        while (SDL_PollEvent(&e) != 0) {
-            if (e.type == SDL_QUIT) quit = true;
-            if (e.type == SDL_MOUSEBUTTONDOWN)
-                if( e.button.button == SDL_BUTTON_LEFT ){
-                    int x = e.button.x;
-                    int y = e.button.y;
-                    //New Game
-                    if (259 <= x && x <= 479 && 284 <= y && y <= 356) {
-                        OptionScreen::start(gRenderer, quit);
-                        MainScreen::start(gRenderer);
-                    }
-                    //Introduction
-                    if (259 <= x && x <= 479 && 419 <= y && y <= 490) {
-                        InstructionScreen::start(gRenderer, quit);
-                        MainScreen::start(gRenderer);
-                    }
-                    //High score
-                    if (259 <= x && x <= 479 && 563 <= y && y <= 635) {
-                        HighscoreScreen::start(gRenderer, quit);
-                        MainScreen::start(gRenderer);
-                    }
-                }
-        }
+        if (!DataManager::haveLastGame()) MainScreen::start(gRenderer, quit);
+        else MainScreenContinue::start(gRenderer, quit);
     }
 
     close();

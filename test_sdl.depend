@@ -1,10 +1,5 @@
 # depslib dependency file v1.0
-1523185717 source:e:\data\c++project\test_sdl\main.cpp
-	<iostream>
-	<SDL.h>
-	<SDL_image.h>
-	<SDL_ttf.h>
-	<SDL_Main.h>
+1523205424 source:e:\data\c++project\test_sdl\main.cpp
 	<main.h>
 
 1519922211 e:\data\codeblocks\sdl2\include\sdl2\sdl.h
@@ -352,7 +347,7 @@
 	<SDL.h>
 	<SDL_image.h>
 
-1523202694 e:\data\c++project\test_sdl\main.h
+1523208664 e:\data\c++project\test_sdl\main.h
 	<iostream>
 	<fstream>
 	<SDL.h>
@@ -361,11 +356,11 @@
 	<SDL_ttf.h>
 	<vector>
 
-1522997836 source:e:\data\c++project\test_sdl\mainscreen.cpp
+1523205033 source:e:\data\c++project\test_sdl\mainscreen.cpp
 	<main.h>
 	<iostream>
 
-1523117475 source:e:\data\c++project\test_sdl\optionscreen.cpp
+1523206112 source:e:\data\c++project\test_sdl\optionscreen.cpp
 	<main.h>
 
 1522778878 e:\data\c++project\test_sdl\nfd.h
@@ -384,7 +379,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1523203450 source:e:\data\c++project\test_sdl\gamescreen.cpp
+1523212560 source:e:\data\c++project\test_sdl\gamescreen.cpp
 	<main.h>
 	<time.h>
 
@@ -399,12 +394,16 @@
 1523197119 source:e:\data\c++project\test_sdl\highscorescreen.cpp
 	<main.h>
 
-1523129138 source:e:\data\c++project\test_sdl\datamanager.cpp
+1523212102 source:e:\data\c++project\test_sdl\datamanager.cpp
 	<main.h>
 
-1523185945 source:e:\data\c++project\test_sdl\instructionscreen.cpp
+1523211207 source:e:\data\c++project\test_sdl\instructionscreen.cpp
 	<main.h>
 
 1523202877 source:e:\data\c++project\test_sdl\outroscreen.cpp
 	<main.h>
+
+1523206101 source:e:\data\c++project\test_sdl\mainscreencontinue.cpp
+	<main.h>
+	<iostream>
 

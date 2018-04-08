@@ -13,13 +13,14 @@ TTF_Font* gFontGameScreen = NULL;
 bool isPreviewing = false;
 
 //2x + 5 = 3y + 10 = 4z + 15 => square size 475
-void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src) {
+void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src, bool isContinuing) {
     bool giveUp = false;
+    bool backPressed = false;
 
     //generate game data
     gameValue.width = mode;
     gameValue.height = mode;
-    gameValue.time = 0;
+    gameValue.score = 0;
     gameValue.isSetStartTime = false;
     gameValue.pos0 = {mode-1, mode-1};
     for (int i = 0; i < mode; i++)
@@ -29,13 +30,13 @@ void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src
 
     shuffleGame(gameValue, mode);
 
-    //set up image source
-    loadImage(gRenderer, src);
+    //set up data
+    loadData(gRenderer, src, mode, isContinuing);
 
     loadBackground(gRenderer, mode);
 
     SDL_Event e;
-    while (!quit) {
+    while (!quit && !backPressed) {
         if (checkFinished(mode)) break;
         showScore(gRenderer);
 
@@ -48,8 +49,11 @@ void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src
 
                     int x = e.button.x;
                     int y = e.button.y;
-                    giveUp = true;
+                    //back
+                    if (0 <= x && x <= 80 && 0 <= y && y <= 80) backPressed = true;
+                    //give up
                     if (370 <= x && x <= 600 && 40 <= y && y <= 100) {
+                        giveUp = true;
                         string solution = SolvingPuzzle::solvePuzzle(gameValue);
                         for (int i = 0; i < solution.size(); i++) {
                             SDL_PollEvent(&e);
@@ -85,7 +89,7 @@ void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src
             isPreviewing = !isPreviewing;
             if (!isPreviewing) {
                 loadBackground(gRenderer, mode);
-                gameValue.startTime = SDL_GetTicks() / 700 - gameValue.time;
+                gameValue.startTime = SDL_GetTicks() / 1000 - gameValue.score;
             } else {
                 for (int i = 0; i < mode; i++)
                     for (int j = 0; j < mode; j++) {
@@ -103,9 +107,55 @@ void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src
     }
 
     Sleep(100);
-    if (!quit)
+    if (!quit && !backPressed) {
+        DataManager::saveLastGame(false, gameValue, src);
         if (giveUp) OutroScreen::loseScreen(gRenderer, quit);
-        else OutroScreen::winScreen(gRenderer, quit, mode-2, gameValue.time);
+        else OutroScreen::winScreen(gRenderer, quit, mode-2, gameValue.score);
+    }
+    else
+        DataManager::saveLastGame(true, gameValue, src);
+}
+
+//get data about the image
+void GameScreen::loadData(SDL_Renderer* gRenderer, string& src, int& mode, bool isContinuing) {
+    if (isContinuing) {
+        src = DataManager::dataLastGame(gameValue);
+        mode = gameValue.height;
+    }
+
+    SDL_Surface* surface = IMG_Load(src.c_str());
+    if (surface == NULL) surface = IMG_Load("Picture/default.jpg");
+
+    imageWidth = surface->w;
+    imageHeight = surface->h;
+
+    imageTexture = SDL_CreateTextureFromSurface(gRenderer, surface);
+
+    SDL_FreeSurface(surface);
+}
+
+//draw screen
+void GameScreen::loadBackground(SDL_Renderer* gRenderer, int mode) {
+    //clear screen
+    SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+    SDL_RenderClear(gRenderer);
+
+    //draw background
+    if (backgroundGameScreen == NULL) {
+        SDL_Surface* surface = IMG_Load("Picture/GameBackground.png");
+        backgroundGameScreen = SDL_CreateTextureFromSurface(gRenderer, surface);
+        SDL_FreeSurface(surface);
+    }
+    SDL_RenderCopy( gRenderer, backgroundGameScreen, NULL, NULL );
+
+    //draw image
+    drawImage(gRenderer, mode);
+
+    //show current score
+    drawText(gRenderer, to_string(gameValue.score), 220, 57, {0,0,0,255});
+    SDL_RenderPresent(gRenderer);
+
+    SDL_RenderPresent( gRenderer );
 }
 
 bool GameScreen::checkFinished(int mode) {
@@ -117,17 +167,15 @@ bool GameScreen::checkFinished(int mode) {
     return true;
 }
 
-void GameScreen::showScore(SDL_Renderer* gRenderer) {
-    if (!gameValue.isSetStartTime || isPreviewing) return;
-
-    if (SDL_GetTicks() / 700 - gameValue.startTime != gameValue.time) {
-        gameValue.time = SDL_GetTicks() / 700 - gameValue.startTime;
-
-        erasePiece(gRenderer, 203, 51, 110, 48);
-        drawText(gRenderer, to_string(gameValue.time), 220, 57, {0,0,0,255});
-
-        SDL_RenderPresent(gRenderer);
-    }
+void GameScreen::drawImage(SDL_Renderer* gRenderer, int mode) {
+    for (int i = 0; i < mode; i++)
+        for (int j = 0; j < mode; j++) {
+            int w = (475 - (mode-1)*5) / mode;
+            int h = (475 - (mode-1)*5) / mode;
+            int x = j * h + j * 5 + 125;
+            int y = i * w + i * 5 + 176;
+            drawPiece(gRenderer, mode, x, y, w, h, gameValue.table[i][j]);
+        }
 }
 
 //toPiece is empty 0
@@ -138,7 +186,7 @@ void GameScreen::swapPiece(SDL_Renderer* gRenderer, GAME& gameValue, int mode, i
 
     if (!gameValue.isSetStartTime) {
         gameValue.isSetStartTime = true;
-        gameValue.startTime = SDL_GetTicks() / 700 - gameValue.time;
+        gameValue.startTime = SDL_GetTicks() / 1000 - gameValue.score;
     }
 
     int value = gameValue.table[fromI][fromJ];
@@ -150,6 +198,19 @@ void GameScreen::swapPiece(SDL_Renderer* gRenderer, GAME& gameValue, int mode, i
     gameValue.pos0 = {fromI, fromJ};
 
     loadBackground(gRenderer, mode);
+}
+
+void GameScreen::showScore(SDL_Renderer* gRenderer) {
+    if (!gameValue.isSetStartTime || isPreviewing) return;
+
+    if (SDL_GetTicks() / 1000 - gameValue.startTime != gameValue.score) {
+        gameValue.score = SDL_GetTicks() / 1000 - gameValue.startTime;
+
+        erasePiece(gRenderer, 203, 51, 110, 48);
+        drawText(gRenderer, to_string(gameValue.score), 220, 57, {0,0,0,255});
+
+        SDL_RenderPresent(gRenderer);
+    }
 }
 
 void GameScreen::slidingAnimation(SDL_Renderer* gRenderer, int mode, int value, int fromI, int fromJ, int toI, int toJ) {
@@ -181,15 +242,19 @@ void GameScreen::slidingAnimation(SDL_Renderer* gRenderer, int mode, int value, 
     }
 }
 
-void GameScreen::drawImage(SDL_Renderer* gRenderer, int mode) {
-    for (int i = 0; i < mode; i++)
-        for (int j = 0; j < mode; j++) {
-            int w = (475 - (mode-1)*5) / mode;
-            int h = (475 - (mode-1)*5) / mode;
-            int x = j * h + j * 5 + 125;
-            int y = i * w + i * 5 + 176;
-            drawPiece(gRenderer, mode, x, y, w, h, gameValue.table[i][j]);
-        }
+void GameScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int y, SDL_Color color) {
+    if (gFontGameScreen == NULL) gFontGameScreen = TTF_OpenFont( "score.ttf", 34 );
+    SDL_Surface* textSurface = TTF_RenderText_Solid( gFontGameScreen, text.c_str(), color );
+    SDL_Texture* textTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+    //SDL_FreeSurface(textSurface);
+
+    SDL_Rect dstRect;
+    dstRect.x = x;
+    dstRect.y = y;
+    dstRect.w = textSurface->w;
+    dstRect.h = textSurface->h;
+
+    SDL_RenderCopy(gRenderer, textTexture, NULL, &dstRect);
 }
 
 void GameScreen::drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int w, int h, int value) {
@@ -201,8 +266,8 @@ void GameScreen::drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int 
     SDL_Rect srcRect;
     srcRect.w = imageWidth / mode;
     srcRect.h = imageHeight / mode;
-    srcRect.x = ((value-1) % mode) * srcRect.h;
-    srcRect.y = ((value-1) / mode) * srcRect.w;
+    srcRect.x = ((value-1) % mode) * srcRect.w;
+    srcRect.y = ((value-1) / mode) * srcRect.h;
 
     SDL_Rect dstRect;
     dstRect.x = x;
@@ -237,56 +302,6 @@ void GameScreen::erasePiece(SDL_Renderer* gRenderer, int x, int y, int w, int h)
     SDL_RenderCopy(gRenderer, backgroundGameScreen, &rect, &rect);
 }
 
-//get data about the image
-void GameScreen::loadImage(SDL_Renderer* gRenderer, string src) {
-    SDL_Surface* surface = IMG_Load(src.c_str());
-    imageWidth = surface->w;
-    imageHeight = surface->h;
-
-    imageTexture = SDL_CreateTextureFromSurface(gRenderer, surface);
-
-    SDL_FreeSurface(surface);
-}
-
-void GameScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int y, SDL_Color color) {
-    if (gFontGameScreen == NULL) gFontGameScreen = TTF_OpenFont( "score.ttf", 34 );
-    SDL_Surface* textSurface = TTF_RenderText_Solid( gFontGameScreen, text.c_str(), color );
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
-    //SDL_FreeSurface(textSurface);
-
-    SDL_Rect dstRect;
-    dstRect.x = x;
-    dstRect.y = y;
-    dstRect.w = textSurface->w;
-    dstRect.h = textSurface->h;
-
-    SDL_RenderCopy(gRenderer, textTexture, NULL, &dstRect);
-}
-
-//draw screen
-void GameScreen::loadBackground(SDL_Renderer* gRenderer, int mode) {
-    //clear screen
-    SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-    SDL_RenderClear(gRenderer);
-
-    //draw background
-    if (backgroundGameScreen == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/GameBackground.png");
-        backgroundGameScreen = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
-    SDL_RenderCopy( gRenderer, backgroundGameScreen, NULL, NULL );
-
-    //draw image
-    drawImage(gRenderer, mode);
-
-    //show current score
-    drawText(gRenderer, to_string(gameValue.time), 220, 57, {0,0,0,255});
-    SDL_RenderPresent(gRenderer);
-
-    SDL_RenderPresent( gRenderer );
-}
-
 void GameScreen::shuffleGame(GAME& gameValue, int mode) {
     srand(time(NULL));
     for (int i = 0; i < 1000000; i++) {
@@ -309,3 +324,4 @@ void GameScreen::shuffleGame(GAME& gameValue, int mode) {
         }
     }
 }
+

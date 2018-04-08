@@ -45,7 +45,7 @@ void OptionScreen::start(SDL_Renderer* gRenderer, bool& quit) {
         if (currentKeyStates[SDL_SCANCODE_RETURN]) nextScreen = true;
     }
 
-    if (nextScreen) GameScreen::start(gRenderer, quit, mode+2, src);
+    if (nextScreen) GameScreen::start(gRenderer, quit, mode+2, src, false);
 }
 
 void OptionScreen::changeImageSource(SDL_Renderer* gRenderer, int mode, string& src, bool& quit) {

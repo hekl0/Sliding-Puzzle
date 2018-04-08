@@ -46,3 +46,67 @@ vector< pair<string, int> > DataManager::getAllItem(int mode) {
 
     return res;
 }
+
+bool DataManager::haveLastGame() {
+    bool res;
+
+    ifstream file;
+    file.open("Data/last_game.txt", ios::in);
+
+    file >> res;
+
+    file.close();
+
+    return res;
+}
+
+string DataManager::dataLastGame(GAME& gameValue) {
+    bool havingLastGame;
+    int sizeTable;
+    string res;
+
+    ifstream file;
+    file.open("Data/last_game.txt", ios::in);
+    //check if having last game
+    file >> havingLastGame;
+
+    //get table size
+    file >> sizeTable;
+    gameValue.width = sizeTable;
+    gameValue.height = sizeTable;
+
+    //get table value
+    for (int i = 0; i < sizeTable; i++)
+        for (int j = 0; j < sizeTable; j++) {
+            file >> gameValue.table[i][j];
+            if (gameValue.table[i][j] == 0)
+                gameValue.pos0 = {i, j};
+        }
+
+    //get score
+    file >> gameValue.score;
+
+    //get image source
+    file >> res;
+
+    file.close();
+
+    return res;
+}
+
+void DataManager::saveLastGame(bool isUnfinish, GAME gameValue, string src) {
+    cout << src << endl;
+    ofstream file;
+    file.open("Data/last_game.txt", ios::out);
+
+    file << isUnfinish << endl;
+    file << gameValue.height << endl;
+    for (int i = 0; i < gameValue.height; i++)
+        for (int j = 0; j < gameValue.width; j++)
+            file << gameValue.table[i][j] << " ";
+    file << endl;
+    file << gameValue.score << endl;
+    file << src << endl;
+
+    file.close();
+}

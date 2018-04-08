@@ -41,6 +41,7 @@
 		<Unit filename="DataManager.cpp" />
 		<Unit filename="GameScreen.cpp" />
 		<Unit filename="HighscoreScreen.cpp" />
+		<Unit filename="InstructionScreen.cpp" />
 		<Unit filename="MainScreen.cpp" />
 		<Unit filename="OptionScreen.cpp" />
 		<Unit filename="SolvingPuzzle.cpp" />

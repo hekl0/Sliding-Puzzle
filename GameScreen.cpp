@@ -83,8 +83,10 @@ void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src
         //preview image
         if (currentKeyStates[SDL_SCANCODE_SPACE]) {
             isPreviewing = !isPreviewing;
-            if (!isPreviewing) loadBackground(gRenderer, mode);
-            else {
+            if (!isPreviewing) {
+                loadBackground(gRenderer, mode);
+                gameValue.startTime = SDL_GetTicks() / 700 - gameValue.time;
+            } else {
                 for (int i = 0; i < mode; i++)
                     for (int j = 0; j < mode; j++) {
                         int w = (475 - (mode-1)*5) / mode;
@@ -116,7 +118,7 @@ bool GameScreen::checkFinished(int mode) {
 }
 
 void GameScreen::showScore(SDL_Renderer* gRenderer) {
-    if (!gameValue.isSetStartTime) return;
+    if (!gameValue.isSetStartTime || isPreviewing) return;
 
     if (SDL_GetTicks() / 700 - gameValue.startTime != gameValue.time) {
         gameValue.time = SDL_GetTicks() / 700 - gameValue.startTime;

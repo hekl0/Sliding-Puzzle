@@ -128,7 +128,7 @@ void OptionScreen::loadBackground(SDL_Renderer* gRenderer, int mode, string src,
 
         //make text
         if (text == "") text = " ";
-        if (gFontOptionScreen == NULL) gFontOptionScreen = TTF_OpenFont( "score.ttf", 28 );
+        if (gFontOptionScreen == NULL) gFontOptionScreen = TTF_OpenFont( "Font/score.ttf", 28 );
         SDL_Surface* textSurface = TTF_RenderText_Solid( gFontOptionScreen, text.c_str(), {0,0,0,255} );
         SDL_Texture* mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
 

@@ -139,7 +139,7 @@ class OutroScreen {
     public:
         static void loseScreen(SDL_Renderer* gRenderer, bool& quit);
         static void winScreen(SDL_Renderer* gRenderer, bool& quit, int mode, int score);
-        static void drawWinScreen(SDL_Renderer* gRenderer, string text);
+        static void drawName(SDL_Renderer* gRenderer, string text);
 };
 #endif
 

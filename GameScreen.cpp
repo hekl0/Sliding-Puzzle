@@ -243,7 +243,7 @@ void GameScreen::slidingAnimation(SDL_Renderer* gRenderer, int mode, int value, 
 }
 
 void GameScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int y, SDL_Color color) {
-    if (gFontGameScreen == NULL) gFontGameScreen = TTF_OpenFont( "score.ttf", 34 );
+    if (gFontGameScreen == NULL) gFontGameScreen = TTF_OpenFont( "Font/score.ttf", 34 );
     SDL_Surface* textSurface = TTF_RenderText_Solid( gFontGameScreen, text.c_str(), color );
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
     //SDL_FreeSurface(textSurface);
@@ -279,7 +279,7 @@ void GameScreen::drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int 
     SDL_RenderCopy(gRenderer, imageTexture, &srcRect, &dstRect);
 
     //draw number
-    gFontGameScreen =  TTF_OpenFont("number.ttf", 25);
+    gFontGameScreen =  TTF_OpenFont("Font/number.ttf", 25);
     drawText(gRenderer, to_string(value), x+10, y+10, {0,0,0,255});
     gFontGameScreen = NULL;
 

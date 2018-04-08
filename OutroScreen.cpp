@@ -45,8 +45,6 @@ void OutroScreen::winScreen(SDL_Renderer* gRenderer, bool& quit, int mode, int s
         SDL_RenderPresent(gRenderer);
     }
 
-    drawWinScreen(gRenderer, "");
-
     //update screen
     SDL_RenderPresent(gRenderer);
 
@@ -57,11 +55,11 @@ void OutroScreen::winScreen(SDL_Renderer* gRenderer, bool& quit, int mode, int s
             if (e.type == SDL_QUIT) quit = true;
             if (e.type == SDL_KEYDOWN) {
                 if (e.key.keysym.sym == SDLK_BACKSPACE && inputText.length() > 0) inputText.pop_back();
-                drawWinScreen(gRenderer, inputText);
+                drawName(gRenderer, inputText);
             }
             if (e.type == SDL_TEXTINPUT && inputText.length() < 10) {
                 inputText += e.text.text;
-                drawWinScreen(gRenderer, inputText);
+                drawName(gRenderer, inputText);
             }
         }
 
@@ -72,10 +70,10 @@ void OutroScreen::winScreen(SDL_Renderer* gRenderer, bool& quit, int mode, int s
     DataManager::addItem(mode, inputText, score);
 }
 
-void OutroScreen::drawWinScreen(SDL_Renderer* gRenderer, string text) {
+void OutroScreen::drawName(SDL_Renderer* gRenderer, string text) {
     if (text == "") text = " ";
 
-    TTF_Font* gFontOutroScreen = TTF_OpenFont( "score.ttf", 30 );
+    TTF_Font* gFontOutroScreen = TTF_OpenFont( "Font/score.ttf", 30 );
     SDL_Surface* textSurface = TTF_RenderText_Solid( gFontOutroScreen, text.c_str(), {255,0,0,255} );
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
 

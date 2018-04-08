@@ -347,7 +347,7 @@
 	<SDL.h>
 	<SDL_image.h>
 
-1523208664 e:\data\c++project\test_sdl\main.h
+1523219388 e:\data\c++project\test_sdl\main.h
 	<iostream>
 	<fstream>
 	<SDL.h>
@@ -360,7 +360,7 @@
 	<main.h>
 	<iostream>
 
-1523206112 source:e:\data\c++project\test_sdl\optionscreen.cpp
+1523219141 source:e:\data\c++project\test_sdl\optionscreen.cpp
 	<main.h>
 
 1522778878 e:\data\c++project\test_sdl\nfd.h
@@ -379,7 +379,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1523212560 source:e:\data\c++project\test_sdl\gamescreen.cpp
+1523219176 source:e:\data\c++project\test_sdl\gamescreen.cpp
 	<main.h>
 	<time.h>
 
@@ -391,7 +391,7 @@
 	<main.h>
 	<iostream>
 
-1523197119 source:e:\data\c++project\test_sdl\highscorescreen.cpp
+1523219253 source:e:\data\c++project\test_sdl\highscorescreen.cpp
 	<main.h>
 
 1523212102 source:e:\data\c++project\test_sdl\datamanager.cpp
@@ -400,7 +400,7 @@
 1523211207 source:e:\data\c++project\test_sdl\instructionscreen.cpp
 	<main.h>
 
-1523202877 source:e:\data\c++project\test_sdl\outroscreen.cpp
+1523219220 source:e:\data\c++project\test_sdl\outroscreen.cpp
 	<main.h>
 
 1523206101 source:e:\data\c++project\test_sdl\mainscreencontinue.cpp

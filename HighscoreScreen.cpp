@@ -95,7 +95,7 @@ void HighscoreScreen::loadHighscore(SDL_Renderer* gRenderer, int mode) {
 
 void HighscoreScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int y) {
     //cout << text << " " << x << " " << y << endl;
-    if (gFontHighscoreScreen == NULL) gFontHighscoreScreen = TTF_OpenFont( "brush.ttf", 40 );
+    if (gFontHighscoreScreen == NULL) gFontHighscoreScreen = TTF_OpenFont( "Font/brush.ttf", 40 );
     SDL_Surface* textSurface = TTF_RenderText_Solid( gFontHighscoreScreen, text.c_str(), {255,255,255,255} );
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
     //SDL_FreeSurface(textSurface);

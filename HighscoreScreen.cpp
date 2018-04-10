@@ -1,12 +1,5 @@
 #include <main.h>
 
-SDL_Texture* backgroundHighscoreScreen = NULL;
-SDL_Texture* easyChoosed = NULL;
-SDL_Texture* mediumChoosed = NULL;
-SDL_Texture* hardChoosed = NULL;
-
-TTF_Font* gFontHighscoreScreen = NULL;
-
 void HighscoreScreen::start(SDL_Renderer* gRenderer, bool& quit) {
     bool backPressed = false;
     int mode = 0;
@@ -47,12 +40,10 @@ void HighscoreScreen::loadBackground(SDL_Renderer* gRenderer, int mode) {
     SDL_RenderClear(gRenderer);
 
     //load background
-    if (backgroundHighscoreScreen == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/HighscoreBackground.png");
-        backgroundHighscoreScreen = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
-    SDL_RenderCopy(gRenderer, backgroundHighscoreScreen, NULL, NULL);
+    SDL_Surface* surface = IMG_Load("Picture/HighscoreBackground.png");
+    SDL_Texture* background = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
+    SDL_RenderCopy(gRenderer, background, NULL, NULL);
 
     if (mode == 0) easyOption(gRenderer, mode);
     if (mode == 1) mediumOption(gRenderer, mode);
@@ -61,6 +52,8 @@ void HighscoreScreen::loadBackground(SDL_Renderer* gRenderer, int mode) {
     loadHighscore(gRenderer, mode);
 
     SDL_RenderPresent(gRenderer);
+
+    SDL_DestroyTexture(background);
 }
 
 void HighscoreScreen::loadHighscore(SDL_Renderer* gRenderer, int mode) {
@@ -94,11 +87,9 @@ void HighscoreScreen::loadHighscore(SDL_Renderer* gRenderer, int mode) {
 }
 
 void HighscoreScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int y) {
-    //cout << text << " " << x << " " << y << endl;
-    if (gFontHighscoreScreen == NULL) gFontHighscoreScreen = TTF_OpenFont( "Font/brush.ttf", 40 );
+    TTF_Font* gFontHighscoreScreen = TTF_OpenFont( "Font/brush.ttf", 40 );
     SDL_Surface* textSurface = TTF_RenderText_Solid( gFontHighscoreScreen, text.c_str(), {255,255,255,255} );
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
-    //SDL_FreeSurface(textSurface);
 
     SDL_Rect dstRect;
     dstRect.x = x;
@@ -107,14 +98,15 @@ void HighscoreScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int 
     dstRect.h = textSurface->h;
 
     SDL_RenderCopy(gRenderer, textTexture, NULL, &dstRect);
+
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
 }
 
 void HighscoreScreen::easyOption(SDL_Renderer* gRenderer, int mode) {
-    if (easyChoosed == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/EasyChoosed.png");
-        easyChoosed = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
+    SDL_Surface* surface = IMG_Load("Picture/EasyChoosed.png");
+    SDL_Texture* easyChoosed = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
 
     SDL_Rect dstRect;
     dstRect.x = 69;
@@ -123,14 +115,14 @@ void HighscoreScreen::easyOption(SDL_Renderer* gRenderer, int mode) {
     dstRect.h = 66;
 
     SDL_RenderCopy(gRenderer, easyChoosed, NULL, &dstRect);
+
+    SDL_DestroyTexture(easyChoosed);
 }
 
 void HighscoreScreen::mediumOption(SDL_Renderer* gRenderer, int mode) {
-    if (mediumChoosed == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/MediumChoosed.png");
-        mediumChoosed = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
+    SDL_Surface* surface = IMG_Load("Picture/MediumChoosed.png");
+    SDL_Texture* mediumChoosed = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
 
     SDL_Rect dstRect;
     dstRect.x = 226;
@@ -139,14 +131,14 @@ void HighscoreScreen::mediumOption(SDL_Renderer* gRenderer, int mode) {
     dstRect.h = 64;
 
     SDL_RenderCopy(gRenderer, mediumChoosed, NULL, &dstRect);
+
+    SDL_DestroyTexture(mediumChoosed);
 }
 
 void HighscoreScreen::hardOption(SDL_Renderer* gRenderer, int mode) {
-    if (hardChoosed == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/HardChoosed.png");
-        hardChoosed = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
+    SDL_Surface* surface = IMG_Load("Picture/HardChoosed.png");
+    SDL_Texture* hardChoosed = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
 
     SDL_Rect dstRect;
     dstRect.x = 468;
@@ -155,4 +147,6 @@ void HighscoreScreen::hardOption(SDL_Renderer* gRenderer, int mode) {
     dstRect.h = 63;
 
     SDL_RenderCopy(gRenderer, hardChoosed, NULL, &dstRect);
+
+    SDL_DestroyTexture(hardChoosed);
 }

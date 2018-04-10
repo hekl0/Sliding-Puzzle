@@ -27,6 +27,8 @@ void OutroScreen::loseScreen(SDL_Renderer* gRenderer, bool& quit) {
         const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
         if (currentKeyStates[SDL_SCANCODE_RETURN]) break;
     }
+
+    SDL_DestroyTexture(gTexture);
 }
 
 void OutroScreen::winScreen(SDL_Renderer* gRenderer, bool& quit, int mode, int score) {
@@ -68,6 +70,8 @@ void OutroScreen::winScreen(SDL_Renderer* gRenderer, bool& quit, int mode, int s
     }
 
     DataManager::addItem(mode, inputText, score);
+
+    SDL_DestroyTexture(gTexture);
 }
 
 void OutroScreen::drawName(SDL_Renderer* gRenderer, string text) {
@@ -89,4 +93,6 @@ void OutroScreen::drawName(SDL_Renderer* gRenderer, string text) {
     SDL_RenderCopy(gRenderer, textTexture, NULL, &dstRect);
 
     SDL_RenderPresent(gRenderer);
+
+    SDL_DestroyTexture(textTexture);
 }

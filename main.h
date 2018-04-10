@@ -98,7 +98,7 @@ class GameScreen {
         static void start(SDL_Renderer* gRenderer, bool& quit, int mode, string src, bool isContinuing);
         static void loadBackground(SDL_Renderer* gRenderer, int mode);
         static void loadData(SDL_Renderer* gRenderer, string& src, int& mode, bool isContinuing);
-        static void drawText(SDL_Renderer* gRenderer, string text, int x, int y, SDL_Color color);
+        static void drawText(SDL_Renderer* gRenderer, string text, int x, int y, SDL_Color color, int sizeText);
         static void drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int w, int h, int value);
         static void erasePiece(SDL_Renderer* gRenderer, int x, int y, int w, int h);
         static void drawImage(SDL_Renderer* gRenderer, int mode);

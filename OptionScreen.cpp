@@ -1,14 +1,5 @@
 #include <main.h>
 
-SDL_Texture* backgroundOptionScreen = NULL;
-SDL_Texture* borderOptionScreen = NULL;
-SDL_Texture* imageSource = NULL;
-SDL_Texture* easyMode = NULL;
-SDL_Texture* mediumMode = NULL;
-SDL_Texture* hardMode = NULL;
-
-TTF_Font* gFontOptionScreen = NULL;
-
 void OptionScreen::start(SDL_Renderer* gRenderer, bool& quit) {
     bool nextScreen = false;
     int mode = 0;
@@ -97,12 +88,11 @@ void OptionScreen::loadBackground(SDL_Renderer* gRenderer, int mode, string src,
     SDL_RenderClear(gRenderer);
 
     //load background
-    if (backgroundOptionScreen == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/OptionBackground.png");
-        backgroundOptionScreen = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
-    SDL_RenderCopy( gRenderer, backgroundOptionScreen, NULL, NULL );
+    SDL_Surface* surface = IMG_Load("Picture/OptionBackground.png");
+    SDL_Texture* background = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
+    SDL_RenderCopy( gRenderer, background, NULL, NULL );
+    SDL_DestroyTexture(background);
 
     loadImage(gRenderer, src);
 
@@ -112,11 +102,9 @@ void OptionScreen::loadBackground(SDL_Renderer* gRenderer, int mode, string src,
 
     if (isChangingImage) {
         //1 make box
-        if (imageSource == NULL) {
-            SDL_Surface* surface = IMG_Load("Picture/ImageSource.png");
-            imageSource = SDL_CreateTextureFromSurface(gRenderer, surface);
-            SDL_FreeSurface(surface);
-        }
+        SDL_Surface* surface = IMG_Load("Picture/ImageSource.png");
+        SDL_Texture* imageSource = SDL_CreateTextureFromSurface(gRenderer, surface);
+        SDL_FreeSurface(surface);
 
         SDL_Rect dsrect;
         dsrect.x = 65;
@@ -125,12 +113,13 @@ void OptionScreen::loadBackground(SDL_Renderer* gRenderer, int mode, string src,
         dsrect.h = 352 - 185;
 
         SDL_RenderCopy( gRenderer, imageSource, NULL, &dsrect);
+        SDL_DestroyTexture(imageSource);
 
         //make text
         if (text == "") text = " ";
-        if (gFontOptionScreen == NULL) gFontOptionScreen = TTF_OpenFont( "Font/score.ttf", 28 );
+        TTF_Font* gFontOptionScreen = TTF_OpenFont( "Font/score.ttf", 28 );
         SDL_Surface* textSurface = TTF_RenderText_Solid( gFontOptionScreen, text.c_str(), {0,0,0,255} );
-        SDL_Texture* mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+        SDL_Texture* text = SDL_CreateTextureFromSurface( gRenderer, textSurface );
 
         int mWidth = textSurface->w;
         int mHeight = textSurface->h;
@@ -149,7 +138,8 @@ void OptionScreen::loadBackground(SDL_Renderer* gRenderer, int mode, string src,
 		dstRect.w = blockWidth;
 		dstRect.h = 33;
 
-		SDL_RenderCopy(gRenderer, mTexture, &srcRect, &dstRect);
+		SDL_RenderCopy(gRenderer, text, &srcRect, &dstRect);
+		SDL_DestroyTexture(text);
     }
 
     SDL_RenderPresent( gRenderer );
@@ -167,27 +157,25 @@ void OptionScreen::loadImage(SDL_Renderer* gRenderer, string src) {
     dsrect.h = 405;
 
     SDL_RenderCopy( gRenderer, background, NULL, &dsrect);
+    SDL_DestroyTexture(background);
 
-    if (borderOptionScreen == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/border.png");
-        borderOptionScreen = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
+    surface = IMG_Load("Picture/border.png");
+    SDL_Texture* border = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
 
     dsrect.x = 167;
     dsrect.y = 79;
     dsrect.w = 382;
     dsrect.h = 417;
 
-    SDL_RenderCopy( gRenderer, borderOptionScreen, NULL, &dsrect);
+    SDL_RenderCopy( gRenderer, border, NULL, &dsrect);
+    SDL_DestroyTexture(border);
 }
 
 void OptionScreen::EasyOption(SDL_Renderer* gRenderer) {
-    if (easyMode == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/EasyMode.png");
-        easyMode = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
+    SDL_Surface* surface = IMG_Load("Picture/EasyMode.png");
+    SDL_Texture* easyMode = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
 
     SDL_Rect dsrect;
     dsrect.x = 285;
@@ -196,14 +184,13 @@ void OptionScreen::EasyOption(SDL_Renderer* gRenderer) {
     dsrect.h = 107;
 
     SDL_RenderCopy( gRenderer, easyMode, NULL, &dsrect);
+    SDL_DestroyTexture(easyMode);
 }
 
 void OptionScreen::MediumOption(SDL_Renderer* gRenderer) {
-    if (mediumMode == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/MediumMode.png");
-        mediumMode = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
+    SDL_Surface* surface = IMG_Load("Picture/MediumMode.png");
+    SDL_Texture* mediumMode = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
 
     SDL_Rect dsrect;
     dsrect.x = 270;
@@ -212,15 +199,13 @@ void OptionScreen::MediumOption(SDL_Renderer* gRenderer) {
     dsrect.h = 35;
 
     SDL_RenderCopy( gRenderer, mediumMode, NULL, &dsrect);
-    SDL_RenderPresent( gRenderer );
+    SDL_DestroyTexture(mediumMode);
 }
 
 void OptionScreen::HardOption(SDL_Renderer* gRenderer) {
-    if (hardMode == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/HardMode.png");
-        hardMode = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
+    SDL_Surface* surface = IMG_Load("Picture/HardMode.png");
+    SDL_Texture* hardMode = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
 
     SDL_Rect dsrect;
     dsrect.x = 305;
@@ -229,9 +214,5 @@ void OptionScreen::HardOption(SDL_Renderer* gRenderer) {
     dsrect.h = 34;
 
     SDL_RenderCopy( gRenderer, hardMode, NULL, &dsrect);
+    SDL_DestroyTexture(hardMode);
 }
-
-//easy 285, 555, 154 ,107
-//medium 270, 585, 176, 35
-//hard 305, 590, 107 , 34
-//image source 65, 185

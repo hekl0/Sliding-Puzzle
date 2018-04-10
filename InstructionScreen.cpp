@@ -1,7 +1,5 @@
 #include <main.h>
 
-SDL_Texture* backgroundInstructionScreen[4];
-
 void InstructionScreen::start(SDL_Renderer* gRenderer, bool& quit) {
     bool backPressed = false;
     int mode = 0;
@@ -40,14 +38,14 @@ void InstructionScreen::loadBackground(SDL_Renderer* gRenderer, int mode) {
     SDL_RenderClear(gRenderer);
 
     //load background
-    if (backgroundInstructionScreen[mode] == NULL) {
-        string src = "";
-        src = src + "Picture/Instruction" + to_string(mode) + ".png";
-        SDL_Surface* surface = IMG_Load(src.c_str());
-        backgroundInstructionScreen[mode] = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
-    SDL_RenderCopy(gRenderer, backgroundInstructionScreen[mode], NULL, NULL);
+    string src = "";
+    src = src + "Picture/Instruction" + to_string(mode) + ".png";
+    SDL_Surface* surface = IMG_Load(src.c_str());
+    SDL_Texture* background = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
+    SDL_RenderCopy(gRenderer, background, NULL, NULL);
 
     SDL_RenderPresent(gRenderer);
+
+    SDL_DestroyTexture(background);
 }

@@ -1,8 +1,6 @@
 #include <main.h>
 #include <iostream>
 
-SDL_Texture* backgroundMainScreen = NULL;
-
 void MainScreen::start(SDL_Renderer* gRenderer, bool& quit) {
     bool goBack = false;
 
@@ -11,12 +9,11 @@ void MainScreen::start(SDL_Renderer* gRenderer, bool& quit) {
     SDL_RenderClear(gRenderer);
 
     //load background
-    if (backgroundMainScreen == NULL) {
-        SDL_Surface* surface = IMG_Load("Picture/background.png");
-        backgroundMainScreen = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-    }
-    SDL_RenderCopy( gRenderer, backgroundMainScreen, NULL, NULL );
+    SDL_Surface* surface = IMG_Load("Picture/background.png");
+    SDL_Texture* background = SDL_CreateTextureFromSurface(gRenderer, surface);
+    SDL_FreeSurface(surface);
+    SDL_RenderCopy( gRenderer, background, NULL, NULL );
+
     SDL_RenderPresent( gRenderer );
 
     SDL_Event e;
@@ -45,4 +42,6 @@ void MainScreen::start(SDL_Renderer* gRenderer, bool& quit) {
                 }
         }
     }
+
+    SDL_DestroyTexture(background);
 }

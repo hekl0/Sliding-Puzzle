@@ -8,7 +8,6 @@ int imageHeight;
 SDL_Texture* imageTexture = NULL;
 SDL_Texture* backgroundGameScreen = NULL;
 SDL_Texture* borderGameScreen = NULL;
-TTF_Font* gFontGameScreen = NULL;
 
 bool isPreviewing = false;
 
@@ -114,6 +113,8 @@ void GameScreen::start(SDL_Renderer* gRenderer, bool& quit, int mode, string src
     }
     else
         DataManager::saveLastGame(true, gameValue, src);
+
+    SDL_DestroyTexture(imageTexture);
 }
 
 //get data about the image
@@ -152,7 +153,7 @@ void GameScreen::loadBackground(SDL_Renderer* gRenderer, int mode) {
     drawImage(gRenderer, mode);
 
     //show current score
-    drawText(gRenderer, to_string(gameValue.score), 220, 57, {0,0,0,255});
+    drawText(gRenderer, to_string(gameValue.score), 220, 57, {0,0,0,255}, 34);
     SDL_RenderPresent(gRenderer);
 
     SDL_RenderPresent( gRenderer );
@@ -207,7 +208,7 @@ void GameScreen::showScore(SDL_Renderer* gRenderer) {
         gameValue.score = SDL_GetTicks() / 1000 - gameValue.startTime;
 
         erasePiece(gRenderer, 203, 51, 110, 48);
-        drawText(gRenderer, to_string(gameValue.score), 220, 57, {0,0,0,255});
+        drawText(gRenderer, to_string(gameValue.score), 220, 57, {0,0,0,255}, 34);
 
         SDL_RenderPresent(gRenderer);
     }
@@ -242,11 +243,10 @@ void GameScreen::slidingAnimation(SDL_Renderer* gRenderer, int mode, int value, 
     }
 }
 
-void GameScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int y, SDL_Color color) {
-    if (gFontGameScreen == NULL) gFontGameScreen = TTF_OpenFont( "Font/score.ttf", 34 );
+void GameScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int y, SDL_Color color, int sizeText) {
+    TTF_Font* gFontGameScreen = TTF_OpenFont( "Font/score.ttf", sizeText);
     SDL_Surface* textSurface = TTF_RenderText_Solid( gFontGameScreen, text.c_str(), color );
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
-    //SDL_FreeSurface(textSurface);
 
     SDL_Rect dstRect;
     dstRect.x = x;
@@ -255,6 +255,9 @@ void GameScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int y, SD
     dstRect.h = textSurface->h;
 
     SDL_RenderCopy(gRenderer, textTexture, NULL, &dstRect);
+
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
 }
 
 void GameScreen::drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int w, int h, int value) {
@@ -279,9 +282,7 @@ void GameScreen::drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int 
     SDL_RenderCopy(gRenderer, imageTexture, &srcRect, &dstRect);
 
     //draw number
-    gFontGameScreen =  TTF_OpenFont("Font/number.ttf", 25);
-    drawText(gRenderer, to_string(value), x+10, y+10, {0,0,0,255});
-    gFontGameScreen = NULL;
+    drawText(gRenderer, to_string(value), x+10, y+10, {0,0,0,255}, 25);
 
     //load border
     if (borderGameScreen == NULL) {

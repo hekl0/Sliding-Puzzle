@@ -62,31 +62,31 @@ void HighscoreScreen::loadHighscore(SDL_Renderer* gRenderer, int mode) {
 
     //215 305
     if (data.size() >= 1) {
-        drawText(gRenderer, data[0].first, 215, 305);
+        drawText(gRenderer, data[0].first, 215, 305, false);
         string text = "";
         text = text + to_string(data[0].second) + "s";
-        drawText(gRenderer, text, 555, 305);
+        drawText(gRenderer, text, 555, 305, true);
     }
-    else drawText(gRenderer, "~~~~~~~~~~~~~~~~~~", 215, 305);
+    else drawText(gRenderer, "~~~~~~~~~~~~~~~~~~", 215, 305, false);
 
     if (data.size() >= 2) {
-        drawText(gRenderer, data[1].first, 215, 445);
+        drawText(gRenderer, data[1].first, 215, 445, false);
         string text = "";
         text = text + to_string(data[1].second) + "s";
-        drawText(gRenderer, text, 555, 445);
+        drawText(gRenderer, text, 555, 445, true);
     }
-    else drawText(gRenderer, "~~~~~~~~~~~~~~~~~~", 215, 445);
+    else drawText(gRenderer, "~~~~~~~~~~~~~~~~~~", 215, 445, false);
 
     if (data.size() >= 3) {
-        drawText(gRenderer, data[2].first, 215, 575);
+        drawText(gRenderer, data[2].first, 215, 575, false);
         string text = "";
         text = text + to_string(data[2].second) + "s";
-        drawText(gRenderer, text, 555, 575);
+        drawText(gRenderer, text, 555, 575, true);
     }
-    else drawText(gRenderer, "~~~~~~~~~~~~~~~~~~", 215, 575);
+    else drawText(gRenderer, "~~~~~~~~~~~~~~~~~~", 215, 575, false);
 }
 
-void HighscoreScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int y) {
+void HighscoreScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int y, bool rightCorner) {
     TTF_Font* gFontHighscoreScreen = TTF_OpenFont( "Font/brush.ttf", 40 );
     SDL_Surface* textSurface = TTF_RenderText_Solid( gFontHighscoreScreen, text.c_str(), {255,255,255,255} );
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
@@ -96,6 +96,7 @@ void HighscoreScreen::drawText(SDL_Renderer* gRenderer, string text, int x, int 
     dstRect.y = y;
     dstRect.w = textSurface->w;
     dstRect.h = textSurface->h;
+    if (rightCorner) dstRect.x = x - dstRect.w / 4;
 
     SDL_RenderCopy(gRenderer, textTexture, NULL, &dstRect);
 

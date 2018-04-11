@@ -117,7 +117,7 @@ class HighscoreScreen {
         static void mediumOption(SDL_Renderer* gRenderer, int mode);
         static void hardOption(SDL_Renderer* gRenderer, int mode);
         static void loadHighscore(SDL_Renderer* gRenderer, int mode);
-        static void drawText(SDL_Renderer* gRenderer, string text, int x, int y);
+        static void drawText(SDL_Renderer* gRenderer, string text, int x, int y, bool rightCorner);
 };
 
 class DataManager {

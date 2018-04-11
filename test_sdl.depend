@@ -347,7 +347,7 @@
 	<SDL.h>
 	<SDL_image.h>
 
-1523363687 e:\data\c++project\test_sdl\main.h
+1523439076 e:\data\c++project\test_sdl\main.h
 	<iostream>
 	<fstream>
 	<SDL.h>
@@ -391,7 +391,7 @@
 	<main.h>
 	<iostream>
 
-1523364433 source:e:\data\c++project\test_sdl\highscorescreen.cpp
+1523439166 source:e:\data\c++project\test_sdl\highscorescreen.cpp
 	<main.h>
 
 1523212102 source:e:\data\c++project\test_sdl\datamanager.cpp

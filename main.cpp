@@ -13,6 +13,7 @@ bool init() {
     TTF_Init();
     gWindow = SDL_CreateWindow("Sliding Puzzle", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+    SDL_SetWindowIcon(gWindow, IMG_Load("Picture/icon.png"));
 
     return true;
 }

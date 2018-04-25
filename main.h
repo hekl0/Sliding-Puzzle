@@ -85,12 +85,13 @@ class MainScreenContinue {
 class OptionScreen {
     public:
         static void start(SDL_Renderer* gRenderer, bool& quit);
-        static void loadBackground(SDL_Renderer* gRenderer, int mode, string src, bool isChangingImage, string text);
+        static void loadBackground(SDL_Renderer* gRenderer, int mode, string src);
         static void loadImage(SDL_Renderer* gRenderer, string src);
         static void EasyOption(SDL_Renderer* gRenderer);
         static void MediumOption(SDL_Renderer* gRenderer);
         static void HardOption(SDL_Renderer* gRenderer);
-        static void changeImageSource(SDL_Renderer* gRenderer, int mode, string& src, bool& quit);
+        static void changeImageSource(string& src);
+        static void drawSubScreen(SDL_Renderer* subRenderer, string textInput);
 };
 
 class GameScreen {

@@ -5,7 +5,7 @@ void OptionScreen::start(SDL_Renderer* gRenderer, bool& quit) {
     int mode = 0;
     string src = "Picture/default.jpg";
 
-    loadBackground(gRenderer, mode, src, false, "");
+    loadBackground(gRenderer, mode, src);
 
     SDL_Event e;
     while (!quit && !nextScreen) {
@@ -18,17 +18,17 @@ void OptionScreen::start(SDL_Renderer* gRenderer, bool& quit) {
                     //left
                     if (173 <= x && x <= 248 && 587 <= y && y <= 629) {
                             mode = (mode - 1 + 3) % 3;
-                            loadBackground(gRenderer, mode, src, false, "");
+                            loadBackground(gRenderer, mode, src);
                     }
                     //right
                     if (464 <= x && x <= 540 && 587 <= y && y <= 629) {
                             mode = (mode + 1) % 3;
-                            loadBackground(gRenderer, mode, src, false, "");
+                            loadBackground(gRenderer, mode, src);
                     }
                     //image source 137 55 575 518
                     if (137 <= x && x <= 575 && 55 <= y && y <= 518) {
-                            changeImageSource(gRenderer, mode, src, quit);
-                            loadBackground(gRenderer, mode, src, false, "");
+                            changeImageSource(src);
+                            loadBackground(gRenderer, mode, src);
                     }
                 }
         }
@@ -39,50 +39,103 @@ void OptionScreen::start(SDL_Renderer* gRenderer, bool& quit) {
     if (nextScreen) GameScreen::start(gRenderer, quit, mode+2, src, false);
 }
 
-void OptionScreen::changeImageSource(SDL_Renderer* gRenderer, int mode, string& src, bool& quit) {
+void OptionScreen::changeImageSource(string& src) {
+    bool quit = false;
     bool choosed = false;
-    std::string inputText = "";
+    std::string textInput = "";
 
-    loadBackground(gRenderer, mode, src, true, inputText);
+    SDL_Window* subWindow  = SDL_CreateWindow( "Changing image" , SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 570, 169, SDL_WINDOW_SHOWN);
+    SDL_Renderer* subRenderer  = SDL_CreateRenderer( subWindow, -1, SDL_RENDERER_ACCELERATED );
+    SDL_SetWindowIcon(subWindow, IMG_Load("Picture/icon.png"));
+    int id = SDL_GetWindowID(subWindow);
+
+    drawSubScreen(subRenderer, textInput);
 
     SDL_Event e;
     SDL_StartTextInput();
     while (!quit && !choosed) {
         while (SDL_PollEvent(&e) != 0) {
-            if (e.type == SDL_QUIT) quit = true;
+            if (e.window.event == SDL_WINDOWEVENT_CLOSE && e.window.windowID == id) quit = true;
+            if (e.window.event == SDL_WINDOWEVENT_FOCUS_LOST && e.window.windowID == id) SDL_RaiseWindow(subWindow);
+
             if (e.type == SDL_MOUSEBUTTONDOWN)
                 if (e.button.button == SDL_BUTTON_LEFT) {
                     int x = e.button.x;
                     int y = e.button.y;
-                    //511 259 553 314
-                    if (511 <= x && x <= 553 && 259 <= y && y <= 314) choosed = true;
+
+                    if (485 <= x && x <= 526 && 88 <= y && y <= 136) choosed = true;
                 }
+
             if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.sym == SDLK_BACKSPACE && inputText.length() > 0) inputText.pop_back();
-                if (e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL) inputText = SDL_GetClipboardText();
-                loadBackground(gRenderer, mode, src, true, inputText);
+                if (e.key.keysym.sym == SDLK_BACKSPACE && textInput.length() > 0) textInput.pop_back();
+                if (e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL) textInput = SDL_GetClipboardText();
+                drawSubScreen(subRenderer, textInput);
             }
             if (e.type == SDL_TEXTINPUT)
                 if (!(( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C')
                 && (e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V') && SDL_GetModState() & KMOD_CTRL)) {
-                    inputText += e.text.text;
-                    loadBackground(gRenderer, mode, src, true, inputText);
+                    textInput += e.text.text;
+                    drawSubScreen(subRenderer, textInput);
+                    cout << textInput << endl;
                 }
         }
     }
     SDL_StopTextInput();
 
-    if (inputText != "") {
-        for (int i = 0; i < inputText.length(); i++)
-            if (inputText[i] == '\\')
-                inputText[i] = '/';
-        if (IMG_Load(inputText.c_str()) != NULL) src = inputText;
+    if (textInput != "") {
+        for (int i = 0; i < textInput.length(); i++)
+            if (textInput[i] == '\\')
+                textInput[i] = '/';
+        if (IMG_Load(textInput.c_str()) != NULL) src = textInput;
     }
 
-    loadBackground(gRenderer, mode, src, false, "");
+    SDL_DestroyRenderer( subRenderer );
+    SDL_DestroyWindow( subWindow );
+    subWindow = NULL;
+    subRenderer = NULL;
 }
 
-void OptionScreen::loadBackground(SDL_Renderer* gRenderer, int mode, string src, bool isChangingImage, string text) {
+void OptionScreen::drawSubScreen(SDL_Renderer* subRenderer, string textInput) {
+    SDL_SetRenderDrawColor( subRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+    SDL_RenderClear( subRenderer );
+
+    //load background
+    SDL_Surface* surface = IMG_Load("Picture/ImageSource.png");
+    SDL_Texture* background = SDL_CreateTextureFromSurface(subRenderer, surface);
+    SDL_FreeSurface(surface);
+    SDL_RenderCopy(subRenderer, background, NULL, NULL);
+    SDL_DestroyTexture(background);
+
+    //make text
+    if (textInput == "") textInput = " ";
+    TTF_Font* gFontOptionScreen = TTF_OpenFont( "Font/score.ttf", 30 );
+    SDL_Surface* textSurface = TTF_RenderText_Solid( gFontOptionScreen, textInput.c_str(), {255,255,255,255} );
+    SDL_Texture* text = SDL_CreateTextureFromSurface( subRenderer, textSurface );
+
+    int mWidth = textSurface->w;
+    int mHeight = textSurface->h;
+    SDL_FreeSurface( textSurface );
+    int blockWidth = min(380, mWidth);
+
+    SDL_Rect srcRect;
+    srcRect.x = mWidth - blockWidth;
+    srcRect.y = 0;
+    srcRect.w = blockWidth;
+    srcRect.h = 33;
+
+    SDL_Rect dstRect;
+    dstRect.x = 70;
+    dstRect.y = 90;
+    dstRect.w = blockWidth;
+    dstRect.h = 33;
+
+    SDL_RenderCopy(subRenderer, text, &srcRect, &dstRect);
+    SDL_DestroyTexture(text);
+
+    SDL_RenderPresent( subRenderer );
+}
+
+void OptionScreen::loadBackground(SDL_Renderer* gRenderer, int mode, string src) {
     //clear screen
     SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
     SDL_RenderClear(gRenderer);
@@ -99,48 +152,6 @@ void OptionScreen::loadBackground(SDL_Renderer* gRenderer, int mode, string src,
     if (mode == 0) EasyOption(gRenderer);
     if (mode == 1) MediumOption(gRenderer);
     if (mode == 2) HardOption(gRenderer);
-
-    if (isChangingImage) {
-        //1 make box
-        SDL_Surface* surface = IMG_Load("Picture/ImageSource.png");
-        SDL_Texture* imageSource = SDL_CreateTextureFromSurface(gRenderer, surface);
-        SDL_FreeSurface(surface);
-
-        SDL_Rect dsrect;
-        dsrect.x = 65;
-        dsrect.y = 185;
-        dsrect.w = 626 - 65;
-        dsrect.h = 352 - 185;
-
-        SDL_RenderCopy( gRenderer, imageSource, NULL, &dsrect);
-        SDL_DestroyTexture(imageSource);
-
-        //make text
-        if (text == "") text = " ";
-        TTF_Font* gFontOptionScreen = TTF_OpenFont( "Font/score.ttf", 28 );
-        SDL_Surface* textSurface = TTF_RenderText_Solid( gFontOptionScreen, text.c_str(), {0,0,0,255} );
-        SDL_Texture* text = SDL_CreateTextureFromSurface( gRenderer, textSurface );
-
-        int mWidth = textSurface->w;
-        int mHeight = textSurface->h;
-		SDL_FreeSurface( textSurface );
-		int blockWidth = min(333, mWidth);
-
-		SDL_Rect srcRect;
-		srcRect.x = mWidth - blockWidth;
-		srcRect.y = 0;
-		srcRect.w = blockWidth;
-		srcRect.h = 33;
-
-		SDL_Rect dstRect;
-		dstRect.x = 168;
-		dstRect.y = 263;
-		dstRect.w = blockWidth;
-		dstRect.h = 33;
-
-		SDL_RenderCopy(gRenderer, text, &srcRect, &dstRect);
-		SDL_DestroyTexture(text);
-    }
 
     SDL_RenderPresent( gRenderer );
 }

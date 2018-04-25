@@ -50,8 +50,10 @@ void OutroScreen::winScreen(SDL_Renderer* gRenderer, bool& quit, int mode, int s
     //update screen
     SDL_RenderPresent(gRenderer);
 
-    SDL_Event e;
     string inputText = "";
+
+    SDL_Event e;
+    SDL_StartTextInput();
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) quit = true;
@@ -68,6 +70,7 @@ void OutroScreen::winScreen(SDL_Renderer* gRenderer, bool& quit, int mode, int s
         const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
         if (currentKeyStates[SDL_SCANCODE_RETURN]) break;
     }
+    SDL_StopTextInput();
 
     DataManager::addItem(mode, inputText, score);
 

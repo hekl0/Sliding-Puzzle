@@ -281,9 +281,6 @@ void GameScreen::drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int 
     //load image piece
     SDL_RenderCopy(gRenderer, imageTexture, &srcRect, &dstRect);
 
-    //draw number
-    drawText(gRenderer, to_string(value), x+10, y+10, {0,0,0,255}, 25);
-
     //load border
     if (borderGameScreen == NULL) {
         SDL_Surface* surface = IMG_Load("Picture/border.png");
@@ -291,6 +288,9 @@ void GameScreen::drawPiece(SDL_Renderer* gRenderer, int mode, int x, int y, int 
         SDL_FreeSurface(surface);
     }
     SDL_RenderCopy(gRenderer, borderGameScreen, NULL, &dstRect);
+
+    //draw number
+    drawText(gRenderer, to_string(value), x+10, y+10, {0,0,0,255}, 25);
 }
 
 void GameScreen::erasePiece(SDL_Renderer* gRenderer, int x, int y, int w, int h) {
